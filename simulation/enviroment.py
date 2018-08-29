@@ -12,8 +12,15 @@ class Issue:
     self.relevant_department = random.randint(1,5)#5 departments
 
 class Firm:
-  def __init__(self,num,resposiviness,interfunctional):
-    agents = [Agent() for i in range(num)]
+  def __init__(self,num_agents,num_dep,resposiviness,interfunctional):
+    self.num_agents = num_agents
+    self.num_dep = num_dep
+    agents = [Agent() for i in range(self.num_agents)]
     issues = [] 
 
-
+  def generate_department_connectivity(num_dep,interfunctional):
+    N,P = num_dep, interfunctional
+    G = nx.generators.random_graphs.gnp_random_graph(N, P)
+    return G, G.edges()
+    #nx.draw(G)
+    #plt.show()
