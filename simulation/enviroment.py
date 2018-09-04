@@ -7,11 +7,11 @@ class Environment:
     self.dynamism = random.random()
 
 class Issue:
-  def __init__(self,id):
+  def __init__(self,id,rel):
     self.id = id
     self.degree_of_urgency = random.random()
-    self.type = random.randint(0, 1)      	  #0: Threat, 1: Opportunity
-    self.relevant_department = random.randint(1,5)#5 departments
+    self.type = random.randint(0, 1)              #0: Threat, 1: Opportunity
+    self.relevant_department = random.randint(0,rel-1)#5 departments
     self.resolved = False
 
   def __str__(self):
@@ -21,9 +21,11 @@ class Firm:
   def __init__(self,num_agents,num_dep,resposiviness,interfunctional):
     self.num_agents = num_agents
     self.num_dep = num_dep
-    self.agents = [Agent() for i in range(self.num_agents)]
+    self.agents = [Agent(num_dep) for i in range(self.num_agents)]
     self.issues = {}
-    self.connectivity = self.generate_department_connectivity(num_dep,interfunctional)[1]
+    tmp = self.generate_department_connectivity(num_dep,interfunctional)
+    self.connectivity = tmp[1]
+    self.firm_c = tmp[0]
 
   def generate_department_connectivity(self,num_dep,interfunctional):
     N,P = num_dep, interfunctional
@@ -35,6 +37,13 @@ class Firm:
 
   def add_issue(self,new_issue):
     self.issues[new_issue]=False
+    dep = new_issue.relevant_department
+    print(dep)
+    print(self.connectivity)
+    print(self.firm_c.neighbors(dep))
+    for a in self.agents:
+        print(a.add_issue(new_issue,self.firm_c.neighbors(dep)))
+        print(a.issues)
 
   def resolved_issues(self):
     return sum(self.issues.values())/len(self.issues)
